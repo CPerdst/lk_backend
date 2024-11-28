@@ -31,7 +31,10 @@ target_include_directories(server PRIVATE lknet/src/include lknet/lklog/src/incl
 # 指定链接库路径
 target_link_directories(server PRIVATE ${CMAKE_BINARY_DIR}/lib)
 
+# 处理平台差异
+find_package(Threads REQUIRED)
+
 # 链接库文件
-target_link_libraries(server PRIVATE lknet lklog)
+target_link_libraries(server PRIVATE lknet lklog Threads::Threads)
 
 
