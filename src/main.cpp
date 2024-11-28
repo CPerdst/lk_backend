@@ -5,6 +5,11 @@
 #include "eventCapturer.h"
 #include "Server.h"
 
+void initLogger(){
+    logger::logger::Root()->setLevel(packer::Debug);
+    logger::logger::Root()->setLogFormater("[%level] [%s {%Y-%m-%d %H:%M:%S}]: %message\n");
+}
+
 /**
  * ./server host port[:8080]
  */
@@ -12,6 +17,9 @@
 int main(int argc, char* argv[]){
     std::string host{};
     unsigned short port = 0;
+
+    initLogger();
+
     switch (argc) {
         case 1:
         {
