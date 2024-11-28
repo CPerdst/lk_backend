@@ -42,12 +42,18 @@ int main(int argc, char* argv[]){
         }
     }
 
+    start:
     try{
+        auto messageHandler = [](Message message){
+            RootInfo() << message.parseMessageToString();
+        };
         Server server(host, port);
         server.start();
     }catch(std::exception& e){
         RootError() << "Server Crashed as for: " << e.what();
         exit(1);
     }
+
+    end:
     return 0;
 }
