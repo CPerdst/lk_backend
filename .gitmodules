@@ -1,0 +1,3 @@
+[submodule "lknet"]
+	path = lknet
+	url = https://github.com/CPerdst/lknet.git
