@@ -16,17 +16,18 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin) # 二进制文件输
 add_subdirectory(lknet)
 
 # 获取 server 源码
-file(GLOB SERVER_SOURCE "src/*.cpp")
+file(GLOB MAIN "src/main.cpp")
+file(GLOB SERVER_SOURCE "src/source/*.cpp")
 
 # --------------------
 # 编译 server 可执行文件
 # --------------------
 
 # 添加源码
-add_executable(server ${SERVER_SOURCE})
+add_executable(server ${MAIN} ${SERVER_SOURCE})
 
 # 指定头文件路径
-target_include_directories(server PRIVATE lknet/src/include lknet/lklog/src/include)
+target_include_directories(server PRIVATE src/include lknet/src/include lknet/lklog/src/include)
 
 # 指定链接库路径
 target_link_directories(server PRIVATE ${CMAKE_BINARY_DIR}/lib)
