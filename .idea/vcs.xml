@@ -2,5 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lknet" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lknet/lklog" vcs="Git" />
   </component>
 </project>

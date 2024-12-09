@@ -4,10 +4,46 @@
 
 #include "eventCapturer.h"
 #include "Server.h"
+#include "common.h"
 
 void initLogger(){
     logger::logger::Root()->setLevel(packer::Debug);
-    logger::logger::Root()->setLogFormater("[%level] [%s {%Y-%m-%d %H:%M:%S}]: %message\n");
+    logger::logger::Root()->setLogFormater("[%level] [%s {%Y-%m-%d %H:%M:%S}] [%path:%line]: %message\n");
+}
+
+void registerDataBase() {
+    // 注册请求协议
+    DataBaseRegister::getInstance().registerDataBase(PROTOCOL_REQUEST_LOGIN, [](){
+        return std::make_unique<LoginDataBase>();
+    });
+    DataBaseRegister::getInstance().registerDataBase(PROTOCOL_REQUEST_REGISTER, [](){
+        return std::make_unique<RegisterDataBase>();
+    });
+    // 注册响应协议
+    DataBaseRegister::getInstance().registerDataBase(PROTOCOL_RESPONSE_STATUS, [](){
+        return std::make_unique<DataBaseStatus>();
+    });
+};
+
+void registerHandler() {
+    RequestHandlerRouter::getInstance().registerHandlerGetterWithResponse(PROTOCOL_REQUEST_LOGIN, [](){
+        return [](const Request& r) {
+            std::cout << "this is handler(id: " << r.getId() << ")" << std::endl;
+            return Response{PROTOCOL_RESPONSE_STATUS, std::make_unique<DataBaseStatus>(DataBaseStatus::Success)};
+        };
+    });
+    RequestHandlerRouter::getInstance().registerHandlerGetterWithResponse(PROTOCOL_REQUEST_REGISTER, [](){
+        return [](const Request& r) {
+            std::cout << "this is handler(id: " << r.getId() << ")" << std::endl;
+            return Response{PROTOCOL_RESPONSE_STATUS, std::make_unique<DataBaseStatus>(DataBaseStatus::Success)};
+        };
+    });
+}
+
+void initServer() {
+    initLogger();
+    registerDataBase();
+    registerHandler();
 }
 
 /**
@@ -18,7 +54,7 @@ int main(int argc, char* argv[]){
     std::string host{};
     unsigned short port = 0;
 
-    initLogger();
+    initServer();
 
     switch (argc) {
         case 1:
@@ -36,7 +72,7 @@ int main(int argc, char* argv[]){
         case 3:
         {
             host = argv[1];
-            unsigned short tmp = std::atoi(argv[2]);
+            unsigned short tmp = static_cast<unsigned short>(std::atoi(argv[2]));
             if(tmp){
                 port = tmp;
                 break;
@@ -52,10 +88,8 @@ int main(int argc, char* argv[]){
 
     start:
     try{
-        auto messageHandler = [](Message message){
-            RootInfo() << message.parseMessageToString();
-        };
-        Server server(host, port, messageHandler);
+        Server server(host, port);
+        // net kernel runs in current thread
         server.start();
     }catch(std::exception& e){
         RootError() << "Server Crashed as for: " << e.what();
