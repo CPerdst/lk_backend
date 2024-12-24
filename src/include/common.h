@@ -5,6 +5,8 @@
 #ifndef SERVER_COMMON_H
 #define SERVER_COMMON_H
 
+#include "Server.h"
+
 enum PROTOCOL_MAPS {
     PROTOCOL_REQUEST_LOGIN = 0x101,
     PROTOCOL_REQUEST_REGISTER = 0x102,
@@ -12,31 +14,33 @@ enum PROTOCOL_MAPS {
 };
 
 struct LoginDataBase: public DataBase{
-    std::string username{};
+    std::string account{};
     std::string password{};
 
-    void from_json(nlohmann::json &j) override {
-        j.at("username").get_to(username);
-        j.at("password").get_to(password);
-    }
+    LoginDataBase() = default;
+    ~LoginDataBase() override = default;
 
-    nlohmann::json to_json() override {
-        return {{"username", username}, {"password", password}};
-    }
+    LoginDataBase(std::string, std::string);
+
+    void from_json(const nlohmann::json &j) override;
+
+    nlohmann::json to_json() override;
 };
 
 struct RegisterDataBase: public DataBase {
+    RegisterDataBase() = default;
+    ~RegisterDataBase() override = default;
+
+    RegisterDataBase(std::string, std::string, std::string, std::string);
+
+    std::string account{};
     std::string username{};
     std::string password{};
+    std::string phone{};
 
-    void from_json(nlohmann::json &j) override {
-        j.at("username").get_to(username);
-        j.at("password").get_to(password);
-    }
+    void from_json(const nlohmann::json &j) override;
 
-    nlohmann::json to_json() override {
-        return {{"username", username}, {"password", password}};
-    }
+    nlohmann::json to_json() override;
 };
 
 #endif //SERVER_COMMON_H
