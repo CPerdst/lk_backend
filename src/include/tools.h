@@ -5,6 +5,8 @@
 #ifndef SERVER_TOOLS_H
 #define SERVER_TOOLS_H
 
+#include <string>
+
 bool isValidAccount(const std::string&);
 
 bool isValidUsername(const std::string&);

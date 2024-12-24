@@ -4,7 +4,7 @@
 
 #include "common.h"
 #include "tools.h"
-#include "boost/mysql.hpp"
+//#include "boost/mysql.hpp"
 
 // -----------------
 // LoginDataBase 实现
@@ -47,10 +47,20 @@ nlohmann::json RegisterDataBase::to_json() {
             {"phone", phone}};
 }
 
+// -----------------
+// 初始化Server
+// 注册DataBase
+// 注册Handler
+// -----------------
+
 auto initServer = []() -> bool {
     auto initLogger = [](){ // 初始化Logger
-        logger::logger::Root()->setLevel(packer::Trace);
-        logger::logger::Root()->setLogFormater("[%level] [%s {%Y-%m-%d %H-%M-%S}] [%path:%line]: %message \n");
+        logger::logger::Root()->setLevel(packer::Debug);
+        if(logger::logger::Root()->getLevel() == packer::Debug){
+            logger::logger::Root()->setLogFormater("[%level] [%s {%Y-%m-%d %H-%M-%S}] [%path:%line]: %message \n");
+        }else if(logger::logger::Root()->getLevel() == packer::Info){
+            logger::logger::Root()->setLogFormater("[%level] [%s {%Y-%m-%d %H-%M-%S}]: %message \n");
+        }
         return true;
     }();
 
