@@ -3,8 +3,10 @@
 //
 
 #include "cmdline.h"
-#include "Server.h"
+// #include "Server.h"
+#include "ClientBuilder.h"
 #include "EventCapturer.h"
+#include "ServerBuilder.h"
 #include "TestClient.h"
 
 /**
@@ -15,8 +17,9 @@ int start_client(const std::string& host, const std::string& port)
 {
     try
     {
-        TestClient testClient{};
-        testClient.start();
+        auto testClient = std::make_shared<ClientBuilder>()->setHost("127.0.0.1")->setPort(9831)->build();
+        // TestClient testClient{};
+        testClient->start();
     }catch(const std::exception& e)
     {
         RootError() << "Client Crashed as for: " << e.what();
@@ -28,9 +31,13 @@ int start_client(const std::string& host, const std::string& port)
 int start_server(const std::string& host, const std::string& port)
 {
     try{
-        Server server(host, std::stoi(port));
+        auto builder = std::make_shared<ServerBuilder>();
+        auto server = builder->setPort(std::stoi(port))
+                 ->setHost(host)
+                 ->setCallback(nullptr)->build();
+        // Server server(host, std::stoi(port));
         // net kernel runs in current thread
-        server.start();
+        server->start();
     }catch(std::exception& e){
         RootError() << "Server Crashed as for: " << e.what();
         return 1;
